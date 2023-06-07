@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Facial Entry</title>
+  <title>Webcam Feed</title>
   <style>
     body {
       display: flex;
@@ -14,6 +14,7 @@
     }
 
     #webcam-container {
+      position: relative;
       width: 700px;
       height: 700px;
       border: 1px solid #ccc;
@@ -60,25 +61,46 @@
       background-color: #8B0000;
       color: #fff;
     }
+
+    #capture-button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   </style>
 </head>
 <body>
   <h1 id="facial-login">Facial Login</h1>
-
   <div id="back-button">
     <button onclick="goBack()">Cancel</button>
   </div>
-
   <div id="webcam-container">
-    <img id="webcam-feed" width="1200" height="720" src="{{ url_for('video_feed') }}"/>
-    <!-- <canvas id="canvas" width="1200" height="720" ></canvas> -->
+    <video id="webcam-feed" autoplay></video>
   </div>
-  
+  <canvas hidden id="image-canvas"></canvas>
+  <button id="capture-button" onclick="captureImage()">Capture Image</button>
 
   <script>
     function goBack() {
-        window.location.href = '/'; 
+      window.location.href = 'index.html';
     }
+
+    function captureImage() {
+  var webcamFeed = document.getElementById('webcam-feed');
+  var canvas = document.getElementById('image-canvas');
+  var context = canvas.getContext('2d');
+  canvas.width = webcamFeed.videoWidth;
+  canvas.height = webcamFeed.videoHeight;
+  context.drawImage(webcamFeed, 0, 0, canvas.width, canvas.height);
+  var imageDataURL = canvas.toDataURL('image/png');
+
+  // Open the captured image in a new tab
+  var imageWindow = window.open();
+  imageWindow.document.write('<img src="' + imageDataURL + '">');
+}
+
+
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(function (stream) {
         var webcamFeed = document.getElementById('webcam-feed');
