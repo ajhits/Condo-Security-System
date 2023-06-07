@@ -26,8 +26,10 @@
 
     #webcam-feed {
       width: 100%;
-      height: 100%;
+
+      padding: 20px;
       object-fit: cover;
+      border-radius: 80px;
     }
     #facial-login {
       position: absolute;
@@ -76,29 +78,31 @@
     <button onclick="goBack()">Cancel</button>
   </div>
   <div id="webcam-container">
-    <video id="webcam-feed" autoplay></video>
+    <img id="webcam-feed" src="{{ url_for('video_feed') }}" />
   </div>
   <canvas hidden id="image-canvas"></canvas>
   <button id="capture-button" onclick="captureImage()">Capture Image</button>
 
   <script>
+
+    // go back to main menu
     function goBack() {
-      window.location.href = 'index.html';
+      window.location.href = '/';
     }
 
     function captureImage() {
-  var webcamFeed = document.getElementById('webcam-feed');
-  var canvas = document.getElementById('image-canvas');
-  var context = canvas.getContext('2d');
-  canvas.width = webcamFeed.videoWidth;
-  canvas.height = webcamFeed.videoHeight;
-  context.drawImage(webcamFeed, 0, 0, canvas.width, canvas.height);
-  var imageDataURL = canvas.toDataURL('image/png');
+      var webcamFeed = document.getElementById('webcam-feed');
+      var canvas = document.getElementById('image-canvas');
+      var context = canvas.getContext('2d');
+      canvas.width = webcamFeed.videoWidth;
+      canvas.height = webcamFeed.videoHeight;
+      context.drawImage(webcamFeed, 0, 0, canvas.width, canvas.height);
+      var imageDataURL = canvas.toDataURL('image/png');
 
-  // Open the captured image in a new tab
-  var imageWindow = window.open();
-  imageWindow.document.write('<img src="' + imageDataURL + '">');
-}
+      // Open the captured image in a new tab
+      var imageWindow = window.open();
+      imageWindow.document.write('<img src="' + imageDataURL + '">');
+    }
 
 
     navigator.mediaDevices.getUserMedia({ video: true })

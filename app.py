@@ -108,25 +108,15 @@ def facialDetection(camera=None, face_detector=None):
             #     timer += time.time() - start_time
             #     start_time = time.time()
                 
-            # Get the coordinates of the face
-            (x, y, w, h) = faces[0]
+            # Get the coordinates of the face,draw rectangele and put text
             
-            # # Draw a rectangle around the face and pt text
-            # #cv2.rectangle(frame, (x, y), (x+w, y+h), (R,G,B), 2)
-            # cv2.putText(frame,textResult,(x,y+h+30),cv2.FONT_HERSHEY_COMPLEX,1,(R,G,B),1)
+            (x, y, w, h) = faces[0]
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (B,G,R), 2)
+            cv2.putText(frame,textResult,(x,y+h+30),cv2.FONT_HERSHEY_COMPLEX,1,(B,G,R),1)
 
-            # Center coordinates
-            center_coordinates = x + w // 2, y + h // 2
-  
-            # Radius of circle
-            radius = w // 2
-   
-            # Blue color in BGR
-            color = (B, G, R)
-   
-#            Line thickness of 2 px
-            thickness = 3
-            cv2.circle(frame, center_coordinates, radius, color, thickness)
+
+            
+
             
             
         elif len(faces) > 1:
