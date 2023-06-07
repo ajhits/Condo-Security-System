@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Generic - Hyperspace by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">VigilanceAI</a>
+				<nav>
+					<ul>
+						<li><a href="index.html">Home</a></li>
+						<li><a href="login.html" class="active">Log In</a></li>
+						
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">Log In</h1>
+							<span class="image fit"><img src="images/p4.jfif" alt="" /></span>
+							<div class="container">
+								<h2>Login</h2>
+								
+								  <label style="text-align: center;" for="username"><b>Username</b></label>
+								  <input id="username" style="text-align: center;" type="text" placeholder="Enter Username" name="username" required>
+								  <br>
+								  <label style="text-align: center;" for="password"><b>Password</b></label>
+								  <input id="password" style="text-align: center;" type="password" placeholder="Enter Password" name="password" required>
+								
+								  <button style="display: block; padding: 3px 25px; margin: 8px auto; cursor: pointer; text-align: center;" onclick="login()">Login</button>
+								
+							  </div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="#">AJ DE ROQUE</a></li>
+					</ul>
+				</div>
+			</footer>
+			<script>
+				function login() {
+					 var username = document.getElementById('username').value;
+					  var password = document.getElementById('password').value;
+	
+					  if (username == 'admin' && password == 'admin123') {
+						alert('Login Success!');
+							window.location.href = 'index.html'; // Redirect to the dashboard.html page
+					  } else {
+						alert('Invalid username or password. Please try again.');
+						  }
+					}
+				  </script>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			
+	</body>
+</html>
