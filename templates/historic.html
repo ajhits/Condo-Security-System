@@ -8,7 +8,20 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
-	<body class="homepage is-preload">
+	<style>
+		table {
+		width: 70%;
+      	text-align: center;
+	    margin-left: auto;
+     	margin-right: auto;
+    }
+	
+		th, td {
+		  padding: 10px;
+		  color: black;
+		}
+	  </style>
+	<body class="right-sidebar is-preload">
 		<div id="page-wrapper">
 
 			<!-- Header -->
@@ -17,13 +30,8 @@
 					<!-- Inner -->
 						<div class="inner">
 							<header>
-								<h1><a href="index.html" id="logo">Admin</a></h1>
-								<hr />
-					
+								<h1><a href="index.html" id="logo">Historic Data</a></h1>
 							</header>
-							<footer>
-								<a href="#banner" class="button circled scrolly">Lock</a>
-							</footer>
 						</div>
 
 					<!-- Nav -->
@@ -33,13 +41,32 @@
 								<li><a href="controls.html">Controls</a></li>
 								<li><a href="historic.html">Historic Data</a></li>
 								<li><a href="register.html">Register</a></li>
-								<li><a href="../index.html">Sign Out</a></li>
 							</ul>
 						</nav>
 
 				</div>
-			</div>
 
+			<!-- Main -->
+				<div class="wrapper style1">
+
+								<article id="main">
+									<table style="text-align: center;">
+										<tr bgcolor="grey">
+											<th width="100">Action</th>
+											<th width="100">Date and Time</th>
+										</tr>
+										<tr bgcolor="lightgrey" align="center">
+											<td>Access Granted</td>
+											<td>2023-06-08 9:00PM</td>
+										</tr>
+										<tr bgcolor="lightgrey" align="center">
+											<td>Access Granted</td>
+											<td>2023-06-08 9:00PM</td>
+										</tr>
+									</table>
+								</article>
+				</div>
+									
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.dropotron.min.js"></script>
