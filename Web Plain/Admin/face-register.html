@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webcam Feed</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: black;
+    }
+
+    #webcam-container {
+      position: relative;
+      width: 700px;
+      height: 700px;
+      border: 1px solid #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #webcam-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #facial-login {
+      position: absolute;
+      left: 100px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      color: white;
+    }
+    #back-button {
+      position: absolute;
+      left: 112px;
+      top: 55%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    #back-button button {
+      font-family: Segoe, Arial, sans-serif;
+      font-size: 18px;
+      color: #8B0000;
+      background-color: transparent;
+      border: 1px solid #8B0000;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #back-button button:hover {
+      background-color: #8B0000;
+      color: #fff;
+    }
+
+    #capture-button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  </style>
+</head>
+<body>
+  <h1 id="facial-login">Facial Register</h1>
+  <div id="webcam-container">
+    <video id="webcam-feed" autoplay></video>
+  </div>
+  <canvas hidden id="image-canvas"></canvas>
+  <button hidden id="capture-button" onclick="captureImage()">Capture Image</button>
+
+  <script>
+    
+
+    function captureImage() {
+  var webcamFeed = document.getElementById('webcam-feed');
+  var canvas = document.getElementById('image-canvas');
+  var context = canvas.getContext('2d');
+  canvas.width = webcamFeed.videoWidth;
+  canvas.height = webcamFeed.videoHeight;
+  context.drawImage(webcamFeed, 0, 0, canvas.width, canvas.height);
+  var imageDataURL = canvas.toDataURL('image/png');
+
+  // Open the captured image in a new tab
+  var imageWindow = window.open();
+  imageWindow.document.write('<img src="' + imageDataURL + '">');
+}
+
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function (stream) {
+        var webcamFeed = document.getElementById('webcam-feed');
+        if ('srcObject' in webcamFeed) {
+          webcamFeed.srcObject = stream;
+        } else {
+          webcamFeed.src = window.URL.createObjectURL(stream);
+        }
+      })
+      .catch(function (error) {
+        console.log('Error accessing webcam:', error);
+      });
+  </script>
+</body>
+</html>
