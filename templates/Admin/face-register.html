@@ -39,8 +39,8 @@
       font-size: 24px;
       color: white;
     }
-
-    #status-text {
+ 
+    status-text{
       position: absolute;
       left: 100px;
       top: 60%;
@@ -86,12 +86,47 @@
   <h1 id="facial-login">Facial Register</h1>
   <p id="status-text">Status: </p>
   <div id="webcam-container">
-    <video id="webcam-feed" autoplay></video>
+    <img id="webcam-feed" autoplay src="{{ url_for( 'facial_register' ) }}" /></video>
   </div>
   <canvas hidden id="image-canvas"></canvas>
   <button hidden id="capture-button" onclick="captureImage()">Capture Image</button>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script>
+
+
+  function getResult() {
+    $.ajax({
+      url: "/update_variable", 
+      type: "GET", 
+      data: { /* Replace with any data you need to send to the server */ },
+        success: function(response) {
+          // result = response; // Update the variable with the response from the server
+  
+          document.getElementById("status-text").innerHTML = response;
+          console.log(response)
+
+          // if training
+
+          if (response === "Training"){
+            window.location.href = "{{ url_for('Training') }}";
+          }
+
+          // if (response === "Access Denied"){
+
+          //   // SEND TELEGRAM NOTIFICATION
+
+          //   window.location.href = "{{ url_for('index') }}";
+          // }
+
+          //checkCapture(); //call this function in order to run routing
+        },
+        error: function(xhr) {
+          console.log(xhr.responseText); // Handle any errors that occur
+        }
+      });
+    }
+    
     function captureImage() {
       var webcamFeed = document.getElementById('webcam-feed');
       var canvas = document.getElementById('image-canvas');
@@ -106,18 +141,23 @@
       imageWindow.document.write('<img src="' + imageDataURL + '">');
     }
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(function (stream) {
-        var webcamFeed = document.getElementById('webcam-feed');
-        if ('srcObject' in webcamFeed) {
-          webcamFeed.srcObject = stream;
-        } else {
-          webcamFeed.src = window.URL.createObjectURL(stream);
-        }
-      })
-      .catch(function (error) {
-        console.log('Error accessing webcam:', error);
-      });
+    // navigator.mediaDevices.getUserMedia({ video: true })
+    //   .then(function (stream) {
+    //     var webcamFeed = document.getElementById('webcam-feed');
+    //     if ('srcObject' in webcamFeed) {
+    //       webcamFeed.srcObject = stream;
+    //     } else {
+    //       webcamFeed.src = window.URL.createObjectURL(stream);
+    //     }
+    //   })
+    //   .catch(function (error) {
+    //     console.log('Error accessing webcam:', error);
+    //   });
+
+      var intervalId = setInterval(function(){
+        // facial status
+        getResult();
+      },2000);
   </script>
 </body>
 </html>

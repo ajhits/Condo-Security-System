@@ -51,7 +51,7 @@
   </style>
 </head>
 <body>
-  <div class="blink-text">Don't Interrupt Training Process</div>
+  <div id="blink-text" class="blink-text">Don't Interrupt Training Process</div>
   <div class="dot-container">
     <div class="dot"></div>
     <div class="dot"></div>
@@ -60,4 +60,39 @@
     <div class="dot"></div>
   </div>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    function getResult() {
+    $.ajax({
+      url: "/facialTraining", 
+      type: "GET", 
+      data: { /* Replace with any data you need to send to the server */ },
+        success: function(response) {
+          // result = response; // Update the variable with the response from the server
+          if (response){
+            document.getElementById("blink-text").innerHTML = response;
+          console.log(response)
+
+          // if training
+
+          if (response === "Successfully trained"){
+            window.location.href = "{{ url_for('index') }}";
+          }
+          }
+
+
+       },
+        error: function(xhr) {
+          console.log(xhr.responseText); // Handle any errors that occur
+        }
+      });
+    }
+
+
+    var intervalId = setInterval(function(){
+        // facial status
+        getResult();
+      },2000);
+
+</script>
 </html>
