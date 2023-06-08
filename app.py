@@ -2,13 +2,13 @@ import cv2
 import time
 
 from flask import Flask, render_template,Response,jsonify
-# from Jojo_loRecognition.Face_Recognition import Face_Recognition as Jolo
+from Jojo_loRecognition.Face_Recognition import Face_Recognition as Jolo
 
 app = Flask(__name__)
 
 
 # load a camera,face detection
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(1)
 face_detection = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 
@@ -67,35 +67,35 @@ def facialDetection(camera=None, face_detector=None):
         for (x, y, w, h) in faces:
                             
             # Check if 2 seconds have elapsed since the last send
-            # if timer >= 2:
+            if timer >= 2:
                        
-            #     # facial comparison 
-            #     response = Jolo().Face_Compare(face=frame)
+                # facial comparison 
+                response = Jolo().Face_Compare(face=frame)
                 
-            #     try:
-            #         textResult = response[0]
+                try:
+                    textResult = response[0]
 
-            #         if "No match detected" == response[0]:
-            #             fail+=1
-            #             B, G, R = (0, 0, 255)
-            #             textResult = response[0]
-            #             if not fail == 3:
-            #                 Text = "Access Denied"
-            #         else:
-            #             B, G, R = (0, 255, 0)
-            #             textResult = response[0]
-            #             Text = "Access Granted"
+                    if "No match detected" == response[0]:
+                        fail+=1
+                        B, G, R = (0, 0, 255)
+                        textResult = response[0]
+                        if not fail == 3:
+                            Text = "Access Denied"
+                    else:
+                        B, G, R = (0, 255, 0)
+                        textResult = response[0]
+                        Text = "Access Granted"
                     
-            #     except:
-            #         pass
+                except:
+                    pass
                 
-            #     # Reset the timer and the start time
-            #     timer = 0
-            #     start_time = time.time()
-            # else:
-            #     # Increment the timer by the elapsed time since the last send
-            #     timer += time.time() - start_time
-            #     start_time = time.time()
+                # Reset the timer and the start time
+                timer = 0
+                start_time = time.time()
+            else:
+                # Increment the timer by the elapsed time since the last send
+                timer += time.time() - start_time
+                start_time = time.time()
                 
             # Get the coordinates of the face,draw rectangele and put text
             
