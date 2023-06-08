@@ -1,13 +1,40 @@
+from flask import Flask, render_template, session
 import cv2
 import time
 import os
+
+import random
+import string
+import time
+
+OTP_EXPIRATION_SECONDS = 60
 
 from flask import Flask, render_template,Response,jsonify,request,redirect,url_for
 # from Jojo_loRecognition.Face_Recognition import Face_Recognition as Jolo
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+app.debug = True  # Enable debug mode
 
 
+#OTP
+def generate_otp(length=6):
+        characters = string.ascii_uppercase + string.ascii_lowercase + string.digits
+        return ''.join(random.choice(characters) for _ in range(length))
+
+@app.route('/otp')
+def otp():
+        current_time = time.time()
+
+        if 'otp' not in session or 'otp_expiration' not in session or current_time > session['otp_expiration']:
+            session['otp'] = generate_otp()
+            session['otp_expiration'] = current_time + OTP_EXPIRATION_SECONDS
+            session.modified = True
+
+
+            remaining_time = session['otp_expiration'] - current_time
+            return render_template('otp.html', otp=session['otp'], remaining_time=int(remaining_time))
+        
 # load a camera,face detection
 camera = cv2.VideoCapture(1)
 face_detection = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
