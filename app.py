@@ -1,8 +1,9 @@
 import cv2
 import time
+import os
 
-from flask import Flask, render_template,Response,jsonify
-from Jojo_loRecognition.Face_Recognition import Face_Recognition as Jolo
+from flask import Flask, render_template,Response,jsonify,request,redirect,url_for
+# from Jojo_loRecognition.Face_Recognition import Face_Recognition as Jolo
 
 app = Flask(__name__)
 
@@ -67,35 +68,35 @@ def facialDetection(camera=None, face_detector=None):
         for (x, y, w, h) in faces:
                             
             # Check if 2 seconds have elapsed since the last send
-            if timer >= 2:
+            # if timer >= 2:
                        
-                # facial comparison 
-                response = Jolo().Face_Compare(face=frame)
+            #     # facial comparison 
+            #     response = Jolo().Face_Compare(face=frame)
                 
-                try:
-                    textResult = response[0]
+            #     try:
+            #         textResult = response[0]
 
-                    if "No match detected" == response[0]:
-                        fail+=1
-                        B, G, R = (0, 0, 255)
-                        textResult = response[0]
-                        if not fail == 3:
-                            Text = "Access Denied"
-                    else:
-                        B, G, R = (0, 255, 0)
-                        textResult = response[0]
-                        Text = "Access Granted"
+            #         if "No match detected" == response[0]:
+            #             fail+=1
+            #             B, G, R = (0, 0, 255)
+            #             textResult = response[0]
+            #             if not fail == 3:
+            #                 Text = "Access Denied"
+            #         else:
+            #             B, G, R = (0, 255, 0)
+            #             textResult = response[0]
+            #             Text = "Access Granted"
                     
-                except:
-                    pass
+            #     except:
+            #         pass
                 
-                # Reset the timer and the start time
-                timer = 0
-                start_time = time.time()
-            else:
-                # Increment the timer by the elapsed time since the last send
-                timer += time.time() - start_time
-                start_time = time.time()
+            #     # Reset the timer and the start time
+            #     timer = 0
+            #     start_time = time.time()
+            # else:
+            #     # Increment the timer by the elapsed time since the last send
+            #     timer += time.time() - start_time
+            #     start_time = time.time()
                 
             # Get the coordinates of the face,draw rectangele and put text
             
@@ -148,6 +149,104 @@ def historic():
 def register():
     return render_template('Admin/register.html')
 
+# ------------------- Family Name Register
+@app.route('/admin/Name_Family')
+def nameFamily():
+    return render_template('Admin/family-name-reg.html')
+
+
+# =====================  route for registered faces
+path = f"Jojo_loRecognition/Known_Faces/"
+
+# ********************* API for submit 
+@app.route('/submit_family', methods=['POST'])
+def submit_family():
+    global path
+    
+    # print(str(request.form.get('fullname')))
+    # return jsonify({ "message": "goods" })
+
+    # Define the path to the folder you want to create
+    path = f"Jojo_loRecognition/Registered-Faces/{str(request.form.get('fullname'))}"
+    
+    # Check if the folder already exists
+    if os.path.exists(path):
+        return jsonify({'error': f"Folder {path} already exists"}), 400
+    else:
+        os.makedirs(path)
+        # route to facial registration
+        return redirect(url_for('Finger_register'))
+
+# ------------------- Guest Name Register
+@app.route('/admin/Name_Guest')
+def nameGuest():
+    return render_template('Admin/guest-name-reg.html')
+
+# ------------------- Finger Register
+@app.route('/admin/Finger_register')
+def Finger_register():
+    return render_template('Admin/finger-register.html')
+
+# ------------------- Facial Register
+@app.route('/admin/Facial_Register')
+def Facial_Register():
+    return render_template('Admin/face-register.html')
+
+def facialDetection(camera=None, face_detector=None):
+    global Text
+    
+    Text=""
+    B , G , R = (0,255,255)
+
+    
+    textResult = ""
+    
+    # Login Attempt
+    success = 0
+    fail = 0                                    
+    
+    # Initialize the timer and the start time
+    timer = 0
+    start_time = time.time()
+    
+    while True:
+        
+        # Capture a frame from the camera
+        ret, frame = camera.read()
+        
+        if not ret:
+            break
+
+        frame = cv2.flip(frame,1)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        # Detect faces in the frame
+        faces = face_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=20, minSize=(100, 100), flags=cv2.CASCADE_SCALE_IMAGE)
+   
+        # # checking detecting face should be 1
+        # if len(faces) == 1:
+        #          = faces[0]
+        for (x, y, w, h) in faces:
+                            
+
+            # Get the coordinates of the face,draw rectangele and put text
+            
+        
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (B,G,R), 2)
+            cv2.putText(frame,textResult,(x,y+h+30),cv2.FONT_HERSHEY_COMPLEX,1,(B,G,R),1)
+
+        # elif len(faces) > 1:
+            
+        #     # If more than 1 faces 
+        #     # B, G, R = (0, 0, 255)
+        #     Text = "More than 1 face is detected"
+        # else:
+        #     # B, G, R = (0, 0, 0)
+        #     Text = "No face is detected"    
+            
+        _, frame_encoded  = cv2.imencode('.png', frame)
+        yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + frame_encoded.tobytes() + b'\r\n')
 
 if __name__ == '__main__':
     app.run(

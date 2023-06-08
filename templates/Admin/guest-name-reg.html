@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Name Registration</title>
+  <style>
+    /* CSS for responsive layout */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .container {
+      max-width: 400px;
+      width: 100%;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    
+    .input-group {
+      margin-bottom: 10px;
+      padding: 20px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    
+    @media screen and (max-width: 480px) {
+      .container {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Name Registration as Guest</h2>
+    <div class="input-group">
+
+      <!-- <! -- action = submit the form data to "/submit" via POST --> -->
+      <form id="form" action="/submit" method="POST">
+        <label for="fullname" style="color:white;">Name (Surname, First Name MI):</label>
+        <input type="text" id="fullname" name="fullname" required><br>
+        <input type="submit" value="Submit">
+        
+      </form>
+    </div>
+ 
+    <a href="/admin/register" style="text-decoration: none;">
+      <button style="font-size: 20px;">back</button>
+  </a>
+  </div>
+
+  <script>
+    function registerName() {
+      var name = document.getElementById("nameInput").value;
+      alert("Name registered: " + name);
+      // You can perform additional actions with the registered name here
+    }
+  </script>
+</body>
+</html>
