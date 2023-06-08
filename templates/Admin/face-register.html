@@ -11,6 +11,7 @@
       margin: 0;
       padding: 0;
       background-color: black;
+      font-family: Arial, sans-serif;
     }
 
     #webcam-container {
@@ -29,6 +30,7 @@
       height: 100%;
       object-fit: cover;
     }
+
     #facial-login {
       position: absolute;
       left: 100px;
@@ -37,6 +39,15 @@
       font-size: 24px;
       color: white;
     }
+
+    #status-text {
+      position: absolute;
+      left: 100px;
+      top: 60%;
+      color: white;
+      font-size: 18px;
+    }
+
     #back-button {
       position: absolute;
       left: 112px;
@@ -46,6 +57,7 @@
       align-items: center;
       cursor: pointer;
     }
+
     #back-button button {
       font-family: Segoe, Arial, sans-serif;
       font-size: 18px;
@@ -72,6 +84,7 @@
 </head>
 <body>
   <h1 id="facial-login">Facial Register</h1>
+  <p id="status-text">Status: </p>
   <div id="webcam-container">
     <video id="webcam-feed" autoplay></video>
   </div>
@@ -79,22 +92,19 @@
   <button hidden id="capture-button" onclick="captureImage()">Capture Image</button>
 
   <script>
-    
-
     function captureImage() {
-  var webcamFeed = document.getElementById('webcam-feed');
-  var canvas = document.getElementById('image-canvas');
-  var context = canvas.getContext('2d');
-  canvas.width = webcamFeed.videoWidth;
-  canvas.height = webcamFeed.videoHeight;
-  context.drawImage(webcamFeed, 0, 0, canvas.width, canvas.height);
-  var imageDataURL = canvas.toDataURL('image/png');
+      var webcamFeed = document.getElementById('webcam-feed');
+      var canvas = document.getElementById('image-canvas');
+      var context = canvas.getContext('2d');
+      canvas.width = webcamFeed.videoWidth;
+      canvas.height = webcamFeed.videoHeight;
+      context.drawImage(webcamFeed, 0, 0, canvas.width, canvas.height);
+      var imageDataURL = canvas.toDataURL('image/png');
 
-  // Open the captured image in a new tab
-  var imageWindow = window.open();
-  imageWindow.document.write('<img src="' + imageDataURL + '">');
-}
-
+      // Open the captured image in a new tab
+      var imageWindow = window.open();
+      imageWindow.document.write('<img src="' + imageDataURL + '">');
+    }
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(function (stream) {

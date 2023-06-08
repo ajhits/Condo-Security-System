@@ -1,82 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Name Registration</title>
+  <title>Family Register</title>
   <style>
     /* CSS for responsive layout */
     body {
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      font-family: Arial, sans-serif;
     }
     
     .container {
-      max-width: 400px;
-      width: 100%;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
+      width: 400px;
+      padding: 50px; /* Increased padding to prevent overlap */
+      border: 2px solid #000;
+      border-radius: 10px;
     }
     
-    .input-group {
-      margin-bottom: 10px;
-      padding: 20px;
+    .form-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
     
-    .input-group label {
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
       display: block;
       font-weight: bold;
       margin-bottom: 5px;
     }
     
-    .input-group input {
+    .form-group input {
       width: 100%;
-      padding: 10px;
+      padding: 8px; /* Adjusted padding for input */
       border-radius: 5px;
       border: 1px solid #ccc;
     }
+
+    .fullname{
+      padding-right: 10px;
+    }
     
-    .btn {
-      display: inline-block;
+    .submit-btn {
+      display: block;
+      margin: 0 auto;
       padding: 10px 20px;
       background-color: #4CAF50;
       color: #fff;
       text-decoration: none;
+      border: none;
       border-radius: 5px;
+      font-size: 16px;
+      text-align: center;
+      cursor: pointer;
     }
-    
-    @media screen and (max-width: 480px) {
-      .container {
-        max-width: 100%;
-      }
+
+    .return-btn {
+      margin-top: 20px;
+      display: block;
+      margin: 0 auto;
+      padding: 10px 20px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      text-align: center;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Name Registration as Family</h2>
-    <div class="input-group">
-        <form id="form" action="/submit_family" method="POST">
-            <label for="fullname" style="color:white;">Name (Surname, First Name MI):</label>
-            <input type="text" id="fullname" name="fullname" required><br>
-            <input type="submit" value="Submit">
-            
-          </form>
-    </div>
-
-    <a href="/admin/register" style="text-decoration: none;">
-        <button style="font-size: 20px;">back</button>
+    <h2 class="form-title">Family Register</h2>
+    <form action="/submit_family" method="POST">
+      <div class="form-group">
+        <label for="fullname">Full Name (Surname, First Name MI):</label>
+        <input type="text" id="fullname" name="fullname" required>
+      </div>
+      <input type="submit" value="Submit" class="submit-btn">
+    </form>
+  </div>
+  <div class="return-btn">
+    <a href="/admin" style="text-decoration: none;">
+      <button>Return</button>
     </a>
   </div>
-
-  <script>
-    function registerName() {
-      var name = document.getElementById("nameInput").value;
-      alert("Name registered: " + name);
-      // You can perform additional actions with the registered name here
-    }
-  </script>
 </body>
 </html>

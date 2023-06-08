@@ -34,15 +34,21 @@
       font-size: 40px;
       color: white;
     }
+
+    .next-button {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <button onclick="runProgress()">Register Fingerprint</button>
   <div id="percentage"></div>
   
-  <a href="/admin/Facial_Register">
-    <button >pag tapos mag register mag route sa facial register</button>
+  <a href="/admin/Facial_Register" style="text-decoration:none ;">
+    <button class="next-button">Next</button>
   </a>
+  
+  <label>Finger Enrolled Succesfully!</label>
 
   <script>
     function runProgress() {
@@ -59,8 +65,14 @@
 
         if (progress >= 100) {
           clearInterval(progressInterval);
+          showNextButton();
         }
       }, 70);
+    }
+
+    function showNextButton() {
+      var nextButton = document.querySelector(".next-button");
+      nextButton.style.display = "block";
     }
   </script>
 </body>
