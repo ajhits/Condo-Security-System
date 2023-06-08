@@ -202,7 +202,25 @@ def submit_family():
     
     # Check if the folder already exists
     if os.path.exists(path):
+        return jsonify({'error': f"Folder {path} already exists"}), 400
+    else:
+        os.makedirs(path)
+        # route to facial registration
         return redirect(url_for('Finger_register'))
+
+@app.route('/submit_guest', methods=['POST'])
+def submit_guest():
+    global path
+    
+    # print(str(request.form.get('fullname')))
+    # return jsonify({ "message": "goods" })
+
+    # Define the path to the folder you want to create
+    path = f"Jojo_loRecognition/Registered-Faces/{str(request.form.get('fullname'))}"
+    
+    # Check if the folder already exists
+    if os.path.exists(path):
+        return jsonify({'error': f"Folder {path} already exists"}), 400
     else:
         os.makedirs(path)
         # route to facial registration
