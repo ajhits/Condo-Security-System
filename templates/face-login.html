@@ -139,6 +139,13 @@
                   console.log(response)
 
                   if (response === "Access Granted"){
+                    window.location.href = "{{ url_for('otp') }}";
+                  }
+
+                  if (response === "Access Denied"){
+
+                    // SEND TELEGRAM NOTIFICATION
+
                     window.location.href = "{{ url_for('index') }}";
                   }
 

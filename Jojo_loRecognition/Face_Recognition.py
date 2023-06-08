@@ -45,7 +45,10 @@ class Face_Recognition:
                 for idx, emb_db in enumerate(self.Embeding_List):
    
                     # Calculate pairwise distance using torch.fpairwise_distance
-                    dist = torch.cdist(emb, emb_db).item()
+                    # dist = torch.cdist(emb, emb_db).item()
+
+                    # Calculate ecludian distance using torch.fpairwise_distance
+                    dist = torch.dist(emb, emb_db).item()
                         
                     # append the comparing result
                     match_list.append(dist)

@@ -19,21 +19,21 @@ app.debug = True  # Enable debug mode
 
 #OTP
 def generate_otp(length=6):
-        characters = string.ascii_uppercase + string.ascii_lowercase + string.digits
-        return ''.join(random.choice(characters) for _ in range(length))
+    characters = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
 @app.route('/otp')
 def otp():
-        current_time = time.time()
+    current_time = time.time()
 
-        if 'otp' not in session or 'otp_expiration' not in session or current_time > session['otp_expiration']:
-            session['otp'] = generate_otp()
-            session['otp_expiration'] = current_time + OTP_EXPIRATION_SECONDS
-            session.modified = True
+    if 'otp' not in session or 'otp_expiration' not in session or current_time > session['otp_expiration']:
+        session['otp'] = generate_otp()
+        session['otp_expiration'] = current_time + OTP_EXPIRATION_SECONDS
+        session.modified = True
 
 
-            remaining_time = session['otp_expiration'] - current_time
-            return render_template('otp.html', otp=session['otp'], remaining_time=int(remaining_time))
+        remaining_time = session['otp_expiration'] - current_time
+        return render_template('otp.html', otp=session['otp'], remaining_time=int(remaining_time))
         
 # load a camera,face detection
 camera = cv2.VideoCapture(1)
@@ -149,10 +149,10 @@ def facialDetection(camera=None, face_detector=None):
 def GET_FacialResult():
     return jsonify(Text) 
 
-# Finger or OTP Login ===========================================
-@app.route('/finger_otp')
-def finger_otp():
-    return render_template('fingeropt.html')
+# # Finger or OTP Login ===========================================
+# @app.route('/finger_otp')
+# def finger_otp():
+#     return render_template('fingeropt.html')
 
 # Login as Admin =========================================== #
 @app.route('/admin_login')
