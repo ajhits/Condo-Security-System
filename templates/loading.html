@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Training Process</title>
+  <style>
+    body {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .blink-text {
+      font-size: 24px;
+      color: white;
+      animation: blink 1s infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .dot-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dot {
+      height: 10px;
+      width: 10px;
+      background-color: white;
+      border-radius: 50%;
+      margin: 0 5px;
+      animation: dot-move 1s infinite;
+    }
+
+    @keyframes dot-move {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="blink-text" class="blink-text">Don't Interrupt Training Process</div>
+  <div class="dot-container">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    function getResult() {
+    $.ajax({
+      url: "/facialTraining", 
+      type: "GET", 
+      data: { /* Replace with any data you need to send to the server */ },
+        success: function(response) {
+          // result = response; // Update the variable with the response from the server
+          if (response){
+            document.getElementById("blink-text").innerHTML = response;
+          console.log(response)
+
+          // if training
+
+          if (response === "Successfully trained"){
+            window.location.href = "{{ url_for('index') }}";
+          }
+          }
+
+
+       },
+        error: function(xhr) {
+          console.log(xhr.responseText); // Handle any errors that occur
+        }
+      });
+    }
+
+
+    var intervalId = setInterval(function(){
+        // facial status
+        getResult();
+      },120000);
+
+</script>
+</html>
