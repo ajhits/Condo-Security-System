@@ -9,34 +9,34 @@ import time
 # from pyfingerprint.pyfingerprint import PyFingerprint
 
 # Initialize the fingerprint sensor
-fingerprint = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
+# fingerprint = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
 
 import random
 import string
 import time
 
 OTP_EXPIRATION_SECONDS = 60
-def setup():
-    # Check if the fingerprint sensor is found
-    if not fingerprint.verifyPassword():
-        print("Fingerprint sensor not found!")
-        return False
+# def setup():
+#     # Check if the fingerprint sensor is found
+#     if not fingerprint.verifyPassword():
+#         print("Fingerprint sensor not found!")
+#         return False
 
-    print("Place finger on the sensor to enroll or verify...")
-    return True
+#     print("Place finger on the sensor to enroll or verify...")
+#     return True
 #LOCK
 # Set up GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setwarnings(False)
 
-GPIO.setup(21, GPIO.OUT)	#lock
-GPIO.setup(12, GPIO.OUT)  # For controlling GPIO 12 (Buzzer)
+# GPIO.setup(21, GPIO.OUT)	#lock
+# GPIO.setup(12, GPIO.OUT)  # For controlling GPIO 12 (Buzzer)
 
-# TRIGGER
-GPIO.setup(17, GPIO.OUT)
+# # TRIGGER
+# GPIO.setup(17, GPIO.OUT)
 
-# ECHO
-GPIO.setup(27, GPIO.IN)
+# # ECHO
+# GPIO.setup(27, GPIO.IN)
 
 
 from flask import Flask, render_template,Response,jsonify,request,redirect,url_for
@@ -47,114 +47,115 @@ app.secret_key = 'your_secret_key'
 app.debug = True  # Enable debug mode
 
 # LOCK
-@app.route('/high')
-def set_high():
-    GPIO.output(21, GPIO.HIGH)
-    return render_template('Admin/index.html')
+# @app.route('/high')
+# def set_high():
+#     GPIO.output(21, GPIO.HIGH)
+#     return render_template('Admin/index.html')
 
-#LOCK
-@app.route('/low')
-def set_low():
-    GPIO.output(21, GPIO.LOW)
-    return render_template('Admin/index.html')
+# #LOCK
+# @app.route('/low')
+# def set_low():
+#     GPIO.output(21, GPIO.LOW)
+#     return render_template('Admin/index.html')
 
-@app.route('/unlock', methods=["GET"])
-def unlock():
-    import time
-    GPIO.output(21, GPIO.LOW)
-    time.sleep(3)
-    GPIO.output(21, GPIO.HIGH)
-    return jsonify('Unlocked')
+# @app.route('/unlock', methods=["GET"])
+# def unlock():
+#     import time
+#     GPIO.output(21, GPIO.LOW)
+#     time.sleep(3)
+#     GPIO.output(21, GPIO.HIGH)
+#     return jsonify('Unlocked')
 
-@app.route('/on')
-def buzzer_on():
-    GPIO.output(12, GPIO.HIGH)
-    return render_template('Admin/index.html')
-@app.route('/off')
-def buzzer_off():
-    GPIO.output(12, GPIO.LOW)
-    return render_template('Admin/index.html')
+# @app.route('/on')
+# def buzzer_on():
+#     GPIO.output(12, GPIO.HIGH)
+#     return render_template('Admin/index.html')
+# @app.route('/off')
+# def buzzer_off():
+#     GPIO.output(12, GPIO.LOW)
+#     return render_template('Admin/index.html')
 
-@app.route("/alert", methods=['GET'])
-def alarm():
+# @app.route("/alert", methods=['GET'])
+# def alarm():
     
-    # TRIGGER
-    GPIO.output(17,False)
-    time.sleep(0.5)
-    GPIO.output(17,True)
-    time.sleep(0.00001)
-    GPIO.output(17,False)
+#     # TRIGGER
+#     GPIO.output(17,False)
+#     time.sleep(0.5)
+#     GPIO.output(17,True)
+#     time.sleep(0.00001)
+#     GPIO.output(17,False)
     
-    # ECHO
-    pulse_start,pulse_end = 0,0
-    while GPIO.input(27) == 0:
-        pulse_start = time.time()
+#     # ECHO
+#     pulse_start,pulse_end = 0,0
+#     while GPIO.input(27) == 0:
+#         pulse_start = time.time()
         
-    while GPIO.input(27) == 1:
-        pulse_end = time.time()
+#     while GPIO.input(27) == 1:
+#         pulse_end = time.time()
         
-    distance = (pulse_end-pulse_start) * 17150
-    inches = round(distance / 2.54, 1)
+#     distance = (pulse_end-pulse_start) * 17150
+#     inches = round(distance / 2.54, 1)
     
     
-    print(inches)
+#     # check distance
+#     print(inches)
     
-    if 9 > 10.0:
-        # GPIO.output(12,GPIO.HIGH)
+#     if inches > 10.0:
+#         # GPIO.output(12,GPIO.HIGH)
 
         
-        return jsonify(
-            {
-                'message': "Force Entry!",
-                'warning': True
-            },200)
+#         return jsonify(
+#             {
+#                 'message': "Force Entry!",
+#                 'warning': True
+#             },200)
     
-    # GPIO.output(12,GPIO.LOW)
-    return jsonify(
-            {
-                'message': "No worry ",
-                'warning': False
-            },200)
+#     # GPIO.output(12,GPIO.LOW)
+#     return jsonify(
+#             {
+#                 'message': "No worry ",
+#                 'warning': False
+#             },200)
 
-@app.route('/enroll', methods=["GET"])
-def enroll():
-    # Wait for a finger to be detected
-    while not fingerprint.readImage():
-        pass
+# @app.route('/enroll', methods=["GET"])
+# def enroll():
+#     # Wait for a finger to be detected
+#     while not fingerprint.readImage():
+#         pass
 
-    # Convert the fingerprint image into a template
-    fingerprint.convertImage(0x01)
+#     # Convert the fingerprint image into a template
+#     fingerprint.convertImage(0x01)
 
-    # Store the template on the next available ID
-    position = fingerprint.storeTemplate()
-    if position != -1:
-        print("Fingerprint enrolled successfully at position", position)
-        return jsonify("Fingerprint Enrolled Succesfully")
-    else:
-        print("Failed to store fingerprint template")
-        return jsonify("Fingerprint Not Enrolled")
+#     # Store the template on the next available ID
+#     position = fingerprint.storeTemplate()
+#     if position != -1:
+#         print("Fingerprint enrolled successfully at position", position)
+#         return jsonify("Fingerprint Enrolled Succesfully")
+#     else:
+#         print("Failed to store fingerprint template")
+#         return jsonify("Fingerprint Not Enrolled")
 
   
-@app.route('/verifys', methods=["GET"])
-def verifys():
-    import time
-    # Wait for a finger to be detected
-    while not fingerprint.readImage():
-        pass
+# @app.route('/verifys', methods=["GET"])
+# def verifys():
+#     import time
+#     # Wait for a finger to be detected
+#     while not fingerprint.readImage():
+#         pass
 
-    # Convert the fingerprint image into a template
-    fingerprint.convertImage(0x01)
+#     # Convert the fingerprint image into a template
+#     fingerprint.convertImage(0x01)
 
-    # Search the template in the database
-    position = fingerprint.searchTemplate()
-    if position[0] >= 0:
-        print("Fingerprint verified! Match found at position", position[0])
-        GPIO.output(21, GPIO.LOW)
-        time.sleep(3)
-        return jsonify("Fingerprint Verified!")
-    else:
-        print("Fingerprint not verified! No match found")
-        return jsonify("Fingerprint Not Verified!")
+#     # Search the template in the database
+#     position = fingerprint.searchTemplate()
+#     if position[0] >= 0:
+#         print("Fingerprint verified! Match found at position", position[0])
+#         GPIO.output(21, GPIO.LOW)
+#         time.sleep(3)
+#         return jsonify("Fingerprint Verified!")
+#     else:
+#         print("Fingerprint not verified! No match found")
+#         return jsonify("Fingerprint Not Verified!")
 
    # time.sleep(2)  # Delay before attempting to read the next fingerprint
 #OTP

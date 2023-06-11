@@ -128,59 +128,63 @@
     // add your name and chat IDs
     const chat1 = 626048178;
     var asuncion = 5876464329;
+    const helloFriend = 5234992922;
     // add to array
     var chatIDs =[
-      chat1,
+      helloFriend,
       asuncion,
+      chat1
     ]
 
     
-    // capture images
-    function captureImages(message) {
+// capture images
+function captureImages(message) {
+  return new Promise((resolve, reject) => {
+    // Draw the video frame on the canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+    // Convert the canvas to a blob object
+    canvas.toBlob(function (blob) {
+      // Create a FormData object to send the image
+      var formData = new FormData();
+      var telegram_bot_id = "6282148904:AAHxV4u5rb5sVrKxvCzCJ2EAVCr4jHq4740";
+      var chatid1 = 5876464329;
 
-      // Draw the video frame on the canvas
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      // format for sending Images and Add the IDs to the formData object as an array
+      formData.append("chat_id", JSON.stringify(chatIDs));
+      formData.append("photo", blob, "photo.jpg");
+      formData.append("caption", message);
 
-      // Convert the canvas to a blob object
-      canvas.toBlob(function (blob) {
+      // Create an array to store the promises for each image sending
+      var promises = [];
 
+      // Loop through the chatIds array and send the message to each ID
+      for (var i = 0; i < chatIDs.length; i++) {
+        formData.set('chat_id', chatIDs[i]);
 
-            // Create a FormData object to send the image
-            var formData = new FormData();
-            var telegram_bot_id = "6282148904:AAHxV4u5rb5sVrKxvCzCJ2EAVCr4jHq4740";
-            // var chatid1 = 626048178;
-            var chatid1 = 5876464329;
-    
-            // format for sending Images and Add the IDs to the formData object as an array
-            formData.append("chat_id", JSON.stringify(chatIDs));
-            formData.append("photo", blob, "photo.jpg");
-            formData.append("caption", message);
-    
-                      // Loop through the chatIds array and send the message to each ID
-              for (var i = 0; i < chatIDs.length; i++) {
-                formData.set('chat_id', chatIDs[i]);
-                
-                // Send the image and caption to the Telegram Bot API using Axios
-                axios.post("https://api.telegram.org/bot" + telegram_bot_id + "/sendPhoto",formData,
-                    {
-                      headers: {
-                      "Content-Type": "multipart/form-data",
-                    },
-                }).then(function (response) {
-    
-                  console.log(response);
-    
-                }).catch(function (error) {
-                    console.log(error);
-                });
+        // Create a promise for each image sending
+        var promise = axios.post("https://api.telegram.org/bot" + telegram_bot_id + "/sendPhoto", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-              }
-    
-      }, "image/jpeg", 0.75);
-      
-    };
+        promises.push(promise);
+      }
 
+      // Wait for all promises to resolve
+      Promise.all(promises)
+        .then(function (responses) {
+          console.log(responses);
+          resolve("All images sent successfully");
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject("Failed to send images");
+        });
+    }, "image/jpeg", 0.75);
+  });
+}
 
     // send data
     function createHistory(){
@@ -211,15 +215,32 @@
                   document.getElementById("result").innerHTML = response;
                   console.log(response)
 
-                  if (response === "Access Granted"){
+
+
+                   if (response === "Access Granted"){
                     
                     // to create history
                     createHistory();
 
                     // to capture images
-                    captureImages("Access Granted")
+                   // captureImages("Access Granted")
 
-                    window.location.href = "/fingerotp";
+                                      // Usage example
+                    captureImages("Access Granted")
+                    .then(function (result) {
+                        console.log(result); // Success message
+                        alert(result)
+                        if (result="All images sent successfully"){
+                          window.location.href = "/fingerotp";
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error); // Error message
+                        alert(error)
+                    });
+
+
+                    
                   }
 
                   if (response === "Access Denied"){
@@ -228,9 +249,23 @@
 
                      // to capture images
                     captureImages("Intruder Alert! Someone is trying to access your house")
-                    window.location.href = "/";
-                  }
 
+                                                          // Usage example
+                    captureImages("Intruder Alert! Someone is trying to access your house")
+                    .then(function (result) {
+                        console.log(result); // Success message
+                        alert(result)
+                        if (result="All images sent successfully"){
+                          window.location.href = "/";
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error); // Error message
+                        alert(error)
+                    });
+
+            
+                  } 
                   //checkCapture(); //call this function in order to run routing
               },
             error: function(xhr) {
