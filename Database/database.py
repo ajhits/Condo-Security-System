@@ -38,23 +38,51 @@ def connection():
         print("Error:", err)
         return None
 
+
+# ---------------- check name
+def __checkName(name=None):
+    try:
+        conn = connection()
+        cursor = conn.cursor()
+        # Create the query
+        insert_query = "SELECT COUNT(*) FROM `registered` WHERE name = %s"
+        query = (name,)
+        cursor.execute(insert_query, query)
+        result = cursor.fetchone()
+        
+        print(result[0])
+        
+        if result[0] > 0:
+            return False
+        else:
+            return True
+        
+    except mysql.connector.Error as err:
+        print("Error:", err)
+        result = str(err) 
+        
+    # Close the cursor and connection
+    cursor.close()
+    conn.close()
     
+    return result
 # create data in Registerede table
 def createRegister(name=None,type=None):
     result = ""
     try:
         conn = connection()
         cursor = conn.cursor()
-    
 
-        # Insert data into the HISTORY table
-        insert_query = """
-        INSERT INTO `registered` (name, type)
-        VALUES (%s, %s)
-        """
-        query = (name, type)
-        cursor.execute(insert_query, query)
-        conn.commit()
+        if __checkName(name):
+
+            # Insert data into the HISTORY table
+            insert_query = """
+            INSERT INTO `registered` (name, type)
+            VALUES (%s, %s)
+            """
+            query = (name, type)
+            cursor.execute(insert_query, query)
+            conn.commit()
 
         print("Data inserted successfully!")
         result = "Data inserted successfully!"
@@ -318,3 +346,8 @@ def deleteHistory():
 
 
 # connection()
+
+
+# createRegister(name="Hello Friends",type="Guest")
+
+# __checkName(name="Hello Friends")
