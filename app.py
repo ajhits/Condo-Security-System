@@ -6,6 +6,9 @@ import time
 import os
 #fingerprint
 import time
+import shutil
+import threading
+
 # from pyfingerprint.pyfingerprint import PyFingerprint
 
 # Initialize the fingerprint sensor
@@ -287,7 +290,7 @@ def facialDetection(camera=None, face_detector=None):
                         fail+=1
                         B, G, R = (0, 0, 255)
                         textResult = response[0]
-                        if fail == 5:
+                        if fail == 7:
                             Text = "Access Denied"
                     else:
                         B, G, R = (0, 255, 0)
@@ -407,6 +410,12 @@ def submit_family():
     if os.path.exists(path):
         if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
 
+            # Deleting the directory and its contents
+            shutil.rmtree(path)
+            
+            # create new folder
+            os.makedirs(path)
+            
             # route to facial registration
             return redirect(url_for('Finger_register'))
         else:
@@ -514,6 +523,7 @@ def facialRegister(camera=None, face_detector=None, path=None):
                     print(result)
                     # # facial training
                     # result=Jolo().Face_Train()
+                    threading.Thread(target=trainingtraining,args=()).start()
 
                     
                     
@@ -551,11 +561,12 @@ def Training():
 def trainingtraining():
     global result
     result = Jolo().Face_Train()
+    print("done",result)
 
 @app.route("/facialTraining", methods=["GET"])
 def facialTraining():
 
-    result = Jolo().Face_Train()
+    # result = Jolo().Face_Train()
     return jsonify(result)
 
     # # Replace this with the code that generates the new value of the variable
@@ -584,6 +595,10 @@ def deleteHistoryS():
 @app.route('/deleteGuest', methods=['GET'])
 def deleteGuest():
     result = deleteRegistered()
+    
+    if not result == "No matching record found.":
+        threading.Thread(target=trainingtraining,args=()).start()
+        
     return jsonify(result)
 
 if __name__ == '__main__':
