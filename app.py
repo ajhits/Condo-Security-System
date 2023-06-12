@@ -405,7 +405,12 @@ def submit_family():
     
     # Check if the folder already exists
     if os.path.exists(path):
-        return jsonify({'error': f"Folder {path} already exists"}), 400
+        if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
+
+            # route to facial registration
+            return redirect(url_for('Finger_register'))
+        else:
+            return jsonify("unable to register")
     else:
         if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
             os.makedirs(path)

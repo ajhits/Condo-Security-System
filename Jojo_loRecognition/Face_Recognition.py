@@ -98,7 +98,7 @@ class Face_Recognition:
             label_names = {i: c for c, i in dataset.class_to_idx.items()}
 
         # load the dataset
-            loader = DataLoader(dataset,collate_fn=collate_fn, pin_memory=True)
+            loader = DataLoader(dataset,batch_size=10,collate_fn=collate_fn, pin_memory=True)
 
         # create empty lists for storing embeddings and names
             name_list = []

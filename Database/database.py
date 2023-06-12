@@ -7,8 +7,10 @@ from datetime import datetime
 
 
 host = "localhost"
-user = "admin"
-password = "password"
+# user = "admin"
+# password = "password"
+user = "root"
+password = ""
 database = "smart_ai_home_security"
 
 # Connection to the database
@@ -315,4 +317,4 @@ def deleteHistory():
 
 
 
-connection()
+# connection()
