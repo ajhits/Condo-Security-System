@@ -1,6 +1,6 @@
 from flask import Flask, render_template, Response, session
 from Database.database import createRegister,createHistory,deleteRegistered,readHistory,deleteHistory
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import cv2
 import time
 import os
@@ -9,37 +9,43 @@ import time
 import shutil
 import threading
 
-# from pyfingerprint.pyfingerprint import PyFingerprint
+from pyfingerprint.pyfingerprint import PyFingerprint
 
 # Initialize the fingerprint sensor
-# fingerprint = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
+fingerprint = PyFingerprint('/dev/ttyS0', 57600, 0xFFFFFFFF, 0x00000000)
 
 import random
 import string
 import time
 
 OTP_EXPIRATION_SECONDS = 60
-# def setup():
-#     # Check if the fingerprint sensor is found
-#     if not fingerprint.verifyPassword():
-#         print("Fingerprint sensor not found!")
-#         return False
 
-#     print("Place finger on the sensor to enroll or verify...")
-#     return True
+# papalitan nlang po index dito
+cctv_feedsa = 2
+camera_regface = 0
+
+
+def setup():
+    # Check if the fingerprint sensor is found
+    if not fingerprint.verifyPassword():
+        print("Fingerprint sensor not found!")
+        return False
+
+    print("Place finger on the sensor to enroll or verify...")
+    return True
 #LOCK
 # Set up GPIO
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
-# GPIO.setup(21, GPIO.OUT)	#lock
-# GPIO.setup(12, GPIO.OUT)  # For controlling GPIO 12 (Buzzer)
+GPIO.setup(21, GPIO.OUT)	#lock
+GPIO.setup(12, GPIO.OUT)  # For controlling GPIO 12 (Buzzer)
 
-# # TRIGGER
-# GPIO.setup(17, GPIO.OUT)
+# TRIGGER
+GPIO.setup(17, GPIO.OUT)
 
-# # ECHO
-# GPIO.setup(27, GPIO.IN)
+# ECHO
+GPIO.setup(27, GPIO.IN)
 
 
 from flask import Flask, render_template,Response,jsonify,request,redirect,url_for
@@ -50,115 +56,114 @@ app.secret_key = 'your_secret_key'
 app.debug = True  # Enable debug mode
 
 # LOCK
-# @app.route('/high')
-# def set_high():
-#     GPIO.output(21, GPIO.HIGH)
-#     return render_template('Admin/index.html')
+@app.route('/high')
+def set_high():
+    GPIO.output(21, GPIO.HIGH)
+    return render_template('Admin/index.html')
 
-# #LOCK
-# @app.route('/low')
-# def set_low():
-#     GPIO.output(21, GPIO.LOW)
-#     return render_template('Admin/index.html')
+#LOCK
+@app.route('/low')
+def set_low():
+    GPIO.output(21, GPIO.LOW)
+    return render_template('Admin/index.html')
 
-# @app.route('/unlock', methods=["GET"])
-# def unlock():
-#     import time
-#     GPIO.output(21, GPIO.LOW)
-#     time.sleep(3)
-#     GPIO.output(21, GPIO.HIGH)
-#     return jsonify('Unlocked')
+@app.route('/unlock', methods=["GET"])
+def unlock():
+    import time
+    GPIO.output(21, GPIO.LOW)
+    time.sleep(3)
+    GPIO.output(21, GPIO.HIGH)
+    return jsonify('Unlocked')
 
-# @app.route('/on')
-# def buzzer_on():
-#     GPIO.output(12, GPIO.HIGH)
-#     return render_template('Admin/index.html')
-# @app.route('/off')
-# def buzzer_off():
-#     GPIO.output(12, GPIO.LOW)
-#     return render_template('Admin/index.html')
+@app.route('/on')
+def buzzer_on():
+    GPIO.output(12, GPIO.HIGH)
+    return render_template('Admin/index.html')
+@app.route('/off')
+def buzzer_off():
+    GPIO.output(12, GPIO.LOW)
+    return render_template('Admin/index.html')
 
-# @app.route("/alert", methods=['GET'])
-# def alarm():
+@app.route("/alert", methods=['GET'])
+def alarm():
     
-#     # TRIGGER
-#     GPIO.output(17,False)
-#     time.sleep(0.5)
-#     GPIO.output(17,True)
-#     time.sleep(0.00001)
-#     GPIO.output(17,False)
+    # TRIGGER
+    GPIO.output(17,False)
+    time.sleep(0.5)
+    GPIO.output(17,True)
+    time.sleep(0.00001)
+    GPIO.output(17,False)
     
-#     # ECHO
-#     pulse_start,pulse_end = 0,0
-#     while GPIO.input(27) == 0:
-#         pulse_start = time.time()
+    # ECHO
+    pulse_start,pulse_end = 0,0
+    while GPIO.input(27) == 0:
+        pulse_start = time.time()
         
-#     while GPIO.input(27) == 1:
-#         pulse_end = time.time()
+    while GPIO.input(27) == 1:
+        pulse_end = time.time()
         
-#     distance = (pulse_end-pulse_start) * 17150
-#     inches = round(distance / 2.54, 1)
+    distance = (pulse_end-pulse_start) * 17150
+    inches = round(distance / 2.54, 1)
     
     
-#     # check distance
-#     print(inches)
+    print("sonar test: ",inches)
     
-#     if inches > 10.0:
-#         # GPIO.output(12,GPIO.HIGH)
+    if inches > 10.0:
+        GPIO.output(12,GPIO.HIGH)
 
         
-#         return jsonify(
-#             {
-#                 'message': "Force Entry!",
-#                 'warning': True
-#             },200)
+        return jsonify(
+            {
+                'message': "Force Entry!",
+                'warning': True
+            },200)
     
-#     # GPIO.output(12,GPIO.LOW)
-#     return jsonify(
-#             {
-#                 'message': "No worry ",
-#                 'warning': False
-#             },200)
+    GPIO.output(12,GPIO.LOW)
+    return jsonify(
+            {
+                'message': "No worry ",
+                'warning': False
+            },200)
 
-# @app.route('/enroll', methods=["GET"])
-# def enroll():
-#     # Wait for a finger to be detected
-#     while not fingerprint.readImage():
-#         pass
+@app.route('/enroll', methods=["GET"])
+def enroll():
+    # Wait for a finger to be detected
+    while not fingerprint.readImage():
+        pass
 
-#     # Convert the fingerprint image into a template
-#     fingerprint.convertImage(0x01)
+    # Convert the fingerprint image into a template
+    fingerprint.convertImage(0x01)
 
-#     # Store the template on the next available ID
-#     position = fingerprint.storeTemplate()
-#     if position != -1:
-#         print("Fingerprint enrolled successfully at position", position)
-#         return jsonify("Fingerprint Enrolled Succesfully")
-#     else:
-#         print("Failed to store fingerprint template")
-#         return jsonify("Fingerprint Not Enrolled")
+    # Store the template on the next available ID
+    position = fingerprint.storeTemplate()
+    if position != -1:
+        print("Fingerprint enrolled successfully at position", position)
+        return jsonify("Fingerprint Enrolled Succesfully")
+    else:
+        print("Failed to store fingerprint template")
+        return jsonify("Fingerprint Not Enrolled")
 
-  
-# @app.route('/verifys', methods=["GET"])
-# def verifys():
-#     import time
-#     # Wait for a finger to be detected
-#     while not fingerprint.readImage():
-#         pass
+    time.sleep(2)  # Delay before attempting to read the next fingerprint
+@app.route('/verifys', methods=["GET"])
+def verifys():
+    import time
+    # Wait for a finger to be detected
+    while not fingerprint.readImage():
+        pass
 
-#     # Convert the fingerprint image into a template
-#     fingerprint.convertImage(0x01)
+    # Convert the fingerprint image into a template
+    fingerprint.convertImage(0x01)
 
-#     # Search the template in the database
-#     position = fingerprint.searchTemplate()
-#     if position[0] >= 0:
-#         print("Fingerprint verified! Match found at position", position[0])
-#         GPIO.output(21, GPIO.LOW)
-#         time.sleep(3)
-#         return jsonify("Fingerprint Verified!")
-#     else:
-#         print("Fingerprint not verified! No match found")
-#         return jsonify("Fingerprint Not Verified!")
+    # Search the template in the database
+    position = fingerprint.searchTemplate()
+    if position[0] >= 0:
+        print("Fingerprint verified! Match found at position", position[0])
+        GPIO.output(21, GPIO.LOW)
+        time.sleep(3)
+        return jsonify("Fingerprint Verified!")
+    else:
+        print("Fingerprint not verified! No match found")
+        return jsonify("Fingerprint Not Verified!")
 
    # time.sleep(2)  # Delay before attempting to read the next fingerprint
 #OTP
@@ -183,7 +188,7 @@ def otp():
 # homepage =========================================== #
 @app.route('/')
 def index():
-    # GPIO.output(21, GPIO.HIGH)
+    GPIO.output(21, GPIO.HIGH)
     return render_template('index.html')
     
 
@@ -202,7 +207,7 @@ def facial_login():
 def video_feed():
     
     # load a camera,face detection
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(camera_regface)
     face_detection = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 
@@ -214,9 +219,27 @@ def video_feed():
 def door_feed():
     
     # load a camera,face detection
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(camera_regface)
     return Response(doorFeed(camera=camera), 
                         mimetype='multipart/x-mixed-replace; boundary=frame')
+
+# ------------------- cctv2 camera
+@app.route('/indoor_feed')
+def indoor_feed():
+    
+    # palitan ng index
+    camera_2 = cv2.VideoCapture(1)
+    return Response(get_frame2(camera2=camera_2), mimetype='multipart/x-mixed-replace; boundary=frame')
+# cctv_feed
+def get_frame2(camera2):
+    while True:
+        success, frame = camera2.read()
+        if not success:
+            break
+        ret, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 def doorFeed(camera=None):
  
@@ -235,7 +258,8 @@ def doorFeed(camera=None):
         _, frame_encoded  = cv2.imencode('.png', frame)
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame_encoded.tobytes() + b'\r\n')
-        
+
+           
 # 
 
 # ------------------- Facial recognition Function
@@ -313,7 +337,16 @@ def facialDetection(camera=None, face_detector=None):
             
         
             cv2.rectangle(frame, (x, y), (x+w, y+h), (B,G,R), 2)
-            cv2.putText(frame,textResult,(x,y+h+30),cv2.FONT_HERSHEY_COMPLEX,1,(B,G,R),1)   
+            cv2.putText(frame,textResult,(x,y+h+30),cv2.FONT_HERSHEY_COMPLEX,1,(B,G,R),1)
+
+        # elif len(faces) > 1:
+            
+        #     # If more than 1 faces 
+        #     # B, G, R = (0, 0, 255)
+        #     Text = "More than  face is detected"
+        # else:
+        #     # B, G, R = (0, 0, 0)
+        #     Text = "No face is detected"    
             
         _, frame_encoded  = cv2.imencode('.png', frame)
         yield (b'--frame\r\n'
@@ -354,7 +387,7 @@ def control():
     return render_template('Admin/controls.html')
 #CCTV
 def generate_frames():
-    cctv = cv2.VideoCapture('rtsp://admin:REEBullets007@192.168.254.141/live/ch1')
+    cctv = cv2.VideoCapture('rtsp://admin:REEBullets007@192.168.1.18/live/ch2')
 # Set camera resolution
     cctv.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
     cctv.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
@@ -405,21 +438,18 @@ def submit_family():
 
     # Define the path to the folder you want to create
     path = f"Jojo_loRecognition/Registered-Faces/{str(request.form.get('fullname'))}"
-    
-    # Check if the folder already exists
     if os.path.exists(path):
+        
         if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
-
-            # Deleting the directory and its contents
+        
+            # delete the foldfer path
             shutil.rmtree(path)
             
-            # create new folder
+        
+            # create new path
             os.makedirs(path)
-            
-            # route to facial registration
             return redirect(url_for('Finger_register'))
-        else:
-            return jsonify("unable to register")
+        
     else:
         if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
             os.makedirs(path)
@@ -429,6 +459,9 @@ def submit_family():
 @app.route('/submit_guest', methods=['POST'])
 def submit_guest():
     global path
+    
+    # print(str(request.form.get('fullname')))
+    # return jsonify({ "message": "goods" })
 
     # Define the path to the folder you want to create
     path = f"Jojo_loRecognition/Registered-Faces/{str(request.form.get('fullname'))}"
@@ -468,7 +501,7 @@ result = "capturing..."
 def facial_register():
     
      # load a camera,face detection
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(camera_regface)
     face_detection = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     return Response(
@@ -561,7 +594,6 @@ def Training():
 def trainingtraining():
     global result
     result = Jolo().Face_Train()
-    print("done",result)
 
 @app.route("/facialTraining", methods=["GET"])
 def facialTraining():
@@ -589,21 +621,26 @@ def createHistoryS():
 @app.route('/deleteHistoryS', methods=['GET'])
 def deleteHistoryS():
     dele = deleteHistory()
+        
     return jsonify(dele)
 
 # ********************* API for delete Guest List
 @app.route('/deleteGuest', methods=['GET'])
 def deleteGuest():
     result = deleteRegistered()
+
     
-    if not result == "No matching record found.":
+    if not result== "No matching record found.":
         threading.Thread(target=trainingtraining,args=()).start()
-        
+    
     return jsonify(result)
+
+
+
 
 if __name__ == '__main__':
     app.run(
-        # host='192.168.254.140',
-        host='0.0.0.0',
+        host='192.168.174.11',
         debug=True,
-        port=5001	)
+        port=8001)
+

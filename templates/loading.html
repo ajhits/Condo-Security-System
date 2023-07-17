@@ -68,17 +68,13 @@
       type: "GET", 
       data: { /* Replace with any data you need to send to the server */ },
         success: function(response) {
-          // result = response; // Update the variable with the response from the server
-          if (response){
-            document.getElementById("blink-text").innerHTML = response;
-          console.log(response)
-
+   
           // if training
 
           if (response === "Successfully trained"){
             window.location.href = "{{ url_for('index') }}";
           }
-          }
+          
 
 
        },
@@ -92,7 +88,7 @@
     var intervalId = setInterval(function(){
         // facial status
         getResult();
-      },120000);
+      },1000);
 
 </script>
 </html>
