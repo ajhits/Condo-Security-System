@@ -268,7 +268,15 @@
               
               },1000);
               
-            
+              // clearInterval(intervalId);
+              
+  
+              // Add an event listener for beforeunload event
+                window.addEventListener('beforeunload', function() {
+                    // Clear the interval when the page is unloaded
+                    clearInterval(intervalId);
+                });
+         
 		
 			</script>
 

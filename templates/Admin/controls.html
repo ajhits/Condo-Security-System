@@ -68,17 +68,22 @@
       <div class="wrapper style1">
         <div class="container">
           <h1>CCTV FEED</h1>
-          <img id="video-stream" src="{{ url_for('cctv_feed') }}" width="320" height="240">
+          <img id="video-stream" src="{{ url_for('indoor_feed') }}" width="320" height="240">
           <canvas id="canvas" width="320" height="240"></canvas>
 
           <button id="capture" onclick="capture()">Capture</button>
+          <button onclick="refreshPage()">Switch Camera</button>
           
           <h1>DOOR FEED</h1>
           <img id="video2-stream" src="{{ url_for('door_feed') }}" width="320" height="240">
           <canvas id="canvas" width="320" height="240"></canvas>
         </div>
       </div>
-
+    <script>
+    function refreshPage() {
+        location.reload();
+      }
+    </script>
       <script>
         var video = document.getElementById("video-stream");
         var canvas = document.getElementById("canvas");

@@ -7,10 +7,8 @@ from datetime import datetime
 
 
 host = "localhost"
-# user = "admin"
-# password = "password"
-user = "root"
-password = ""
+user = "admin"
+password = "password"
 database = "smart_ai_home_security"
 
 # Connection to the database
@@ -38,7 +36,7 @@ def connection():
         print("Error:", err)
         return None
 
-
+    
 # ---------------- check name
 def __checkName(name=None):
     try:
@@ -346,8 +344,3 @@ def deleteHistory():
 
 
 # connection()
-
-
-# createRegister(name="Hello Friends",type="Guest")
-
-# __checkName(name="Hello Friends")
