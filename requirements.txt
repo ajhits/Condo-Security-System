@@ -1,7 +1,0 @@
-facenet_pytorch==2.5.2
-Flask==2.2.2
-mysql_connector_repackaged==0.3.1
-opencv_python==4.6.0.66
-pyfingerprint==1.5
-torch==1.13.1
-torchvision==0.14.1
