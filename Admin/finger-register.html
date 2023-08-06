@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register Fingerprint</title>
+  <style>
+    body {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    button {
+      font-size: 24px;
+      color: white;
+      background-color: transparent;
+      border: 2px solid white;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background-color: white;
+      color: black;
+    }
+
+    #percentage {
+      font-size: 40px;
+      color: white;
+    }
+
+    .next-button {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <a>
+  <button onclick="runProgress()">Register Fingerprint</button><a>
+  <div id="percentage"></div>
+  
+  <a href="/admin/Facial_Register" style="text-decoration:none ;">
+    <button class="next-button">Next</button>
+  </a>
+  
+  <label id="status-text" >Finger Enrolled Succesfully!</label>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+  
+    function fininger(){
+     $.ajax({
+      url: "/enroll", 
+      type: "GET", 
+      data: { /* Replace with any data you need to send to the server */ },
+        success: function(response) {
+          // result = response; // Update the variable with the response from the server
+  
+          document.getElementById("status-text").innerHTML = response;
+          console.log(response)
+            alert(response)
+     
+        },
+        error: function(xhr) {
+          console.log(xhr.responseText); // Handle any errors that occur
+        }
+      });
+    }
+    function runProgress() {
+      var percentageElement = document.getElementById("percentage");
+      percentageElement.innerText = "0%";
+
+      var interval = 5; // duration of the progress animation in seconds
+      var increment = 100 / (interval * 1000 / 50); // increment per 50ms for smooth animation
+      var progress = 0;
+
+      var progressInterval = setInterval(function() {
+        progress += increment;
+        percentageElement.innerText = Math.round(progress) + "%";
+
+        if (progress >= 100) {
+          clearInterval(progressInterval);
+          
+          fininger();
+          showNextButton();
+        }
+      }, 70);
+    }
+
+    function showNextButton() {
+      var nextButton = document.querySelector(".next-button");
+      nextButton.style.display = "block";
+    }
+  </script>
+</body>
+</html>

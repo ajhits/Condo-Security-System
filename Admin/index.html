@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Admin</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../static/Admin/assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="../../static/Admin/assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="homepage is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<div id="header">
+
+					<!-- Inner -->
+						<div class="inner">
+							<header>
+                                <a href="/admin/Controls" class="button">MENU</a>
+								<h1><a href="/admin" id="logo">Admin</a></h1>
+								<hr />
+					
+							</header>
+							<footer>
+								<a href="/high" class="button circled scrolly">Lock</a>
+								<a href="/low" class="button circled scrolly">Unlock</a>
+								<a href="/on" onclick="alarm()" class="button circled scrolly">Alarm On</a>
+								<a href="/off"  class="button circled scrolly">Alarm Off</a>
+							</footer>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<ul>
+								<li><a href="index.html">Dashboard</a></li>
+								<li><a href="controls.html">Monitor</a></li>
+								<li><a href="historic.html">Historic Data</a></li>
+								<li><a href="register.html">Register</a></li>
+								<li><a href="/">Sign Out</a></li>
+							</ul>
+						</nav>
+
+				</div>
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../static/Admin/assets/js/jquery.min.js"></script>
+			<script src="../../static/Admin/assets/js/jquery.dropotron.min.js"></script>
+			<script src="../../static/Admin/assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../static/Admin/assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../static/Admin/assets/js/browser.min.js"></script>
+			<script src="../../tatic/Admin/assets/js/breakpoints.min.js"></script>
+			<script src="../../static/Admin/assets/js/util.js"></script>
+			<script src="../../static/Admin/assets/js/main.js"></script>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+			<script>
+
+				// Telegram
+				var telegram_bot_id = "6282148904:AAHxV4u5rb5sVrKxvCzCJ2EAVCr4jHq4740";
+
+				//chat id
+				const chat1 = 626048178;
+                var asuncion = 5876464329;
+				
+				// Array of chat IDs
+				var chatIds = [
+					chat1, 
+					asuncion, 
+				]; 
+
+				function alarm(){
+
+					// send alarm
+					chatIds.forEach(function (chatId) {
+						var settings = {
+							"async": true,
+							"crossDomain": true,
+							"url": "https://api.telegram.org/bot" + telegram_bot_id + "/sendMessage",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json",
+								"cache-control": "no-cache"
+							},
+							"data": JSON.stringify({
+								"chat_id": chatId,
+								"text": "Alarm system has been Triggered!"
+							})
+						};
+			
+			
+						$.ajax(settings).done(function (response) {
+							console.log(response);
+						});
+					});
+				}
+
+			</script>
+
+	</body>
+</html>
