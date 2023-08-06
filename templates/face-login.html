@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webcam Feed</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: black;
+    }
+
+    #webcam-container {
+      position: relative;
+      width: 700px;
+      height: 700px;
+      border: 1px solid #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #webcam-feed {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #facial-login,
+    #facial-status,
+    #back-button,
+    #result {
+      position: absolute;
+      left: 50px;
+      transform: translate(-50%, -50%);
+      color: white;
+    }
+
+    #facial-login,
+    #facial-status {
+      top: 50%;
+      font-size: 24px;
+      padding-left: 30px;
+    }
+
+    #back-button {
+      top: 55%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      padding-left: 20px;
+    }
+
+    #back-button button {
+      font-family: Segoe, Arial, sans-serif;
+      font-size: 18px;
+      color: #8B0000;
+      background-color: transparent;
+      border: 1px solid #8B0000;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #back-button button:hover {
+      background-color: #8B0000;
+      color: #fff;
+    }
+
+    #capture-button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .item {
+      background-color: lightblue;
+      padding: 10px;
+      margin-bottom: 5px;
+    }
+    
+  </style>
+  
+</head>
+<body>
+  <h1 id="facial-login">Facial Login</h1>
+
+  <div id="back-button" style="text-decoration: no;">
+    <button onclick="goBack()">Cancel</button>
+    <!-- <button onclick="captureImages()">Capture</button> -->
+  </div>
+
+  <p style="position: absolute;left: 100px; top: 60%; color: white; font-size: 18px; padding-top: 29px;" id="result">Status: </p>
+
+  <div></div>
+
+  <div id="webcam-container">
+
+    <img id="video" src="{{ url_for('video_feed') }}"/>
+    <canvas id="webcam-feed" width="1200" height="720" ></canvas>
+
+  </div>
+
+
+
+  
+
+
+  <script>
+
+
+
+    var video = document.getElementById("video");
+    var canvas = document.getElementById("webcam-feed");
+    var context = canvas.getContext("2d");
+
+    // add your name and chat IDs
+    const chat1 = 626048178;
+    var asuncion = 5876464329;
+    // add to array
+    var chatIDs =[
+      chat1,
+      asuncion,
+    ]
+
+// capture images
+function captureImages(message) {
+  return new Promise((resolve, reject) => {
+    // Draw the video frame on the canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert the canvas to a blob object
+    canvas.toBlob(function (blob) {
+      // Create a FormData object to send the image
+      var formData = new FormData();
+      var telegram_bot_id = "6282148904:AAHxV4u5rb5sVrKxvCzCJ2EAVCr4jHq4740";
+      var chatid1 = 5876464329;
+
+      // format for sending Images and Add the IDs to the formData object as an array
+      formData.append("chat_id", JSON.stringify(chatIDs));
+      formData.append("photo", blob, "photo.jpg");
+      formData.append("caption", message);
+
+      // Create an array to store the promises for each image sending
+      var promises = [];
+
+      // Loop through the chatIds array and send the message to each ID
+      for (var i = 0; i < chatIDs.length; i++) {
+        formData.set('chat_id', chatIDs[i]);
+
+        // Create a promise for each image sending
+        var promise = axios.post("https://api.telegram.org/bot" + telegram_bot_id + "/sendPhoto", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        promises.push(promise);
+      }
+
+      // Wait for all promises to resolve
+      Promise.all(promises)
+        .then(function (responses) {
+          console.log(responses);
+          resolve("All images sent successfully");
+        })
+        .catch(function (error) {
+          console.log(error);
+          reject("Failed to send images");
+        });
+    }, "image/jpeg", 0.75);
+  });
+}
+
+
+    // send data
+    function createHistory(){
+      $.ajax({
+          url: "/createHistoryS", 
+          type: "GET", 
+          data: { /* Replace with any data you need to send to the server */ },
+              success: function(response) {
+                console.log(response)
+              },
+            error: function(xhr) {
+              console.log(xhr.responseText); // Handle any errors that occur
+          }
+        });
+    }
+
+    // function for get Face Status
+    var result=""
+    function getResult() {
+
+        $.ajax({
+          url: "/GET_FacialResult", 
+          type: "GET", 
+          data: { /* Replace with any data you need to send to the server */ },
+              success: function(response) {
+                result = response; // Update the variable with the response from the server
+          
+                  document.getElementById("result").innerHTML = response;
+                  console.log(response)
+
+                  if (response === "Access Granted"){
+                    
+                    // to create history
+                    createHistory();
+
+                    // to capture images
+                   // captureImages("Access Granted")
+
+                                      // Usage example
+                    captureImages("Access Granted")
+                    .then(function (result) {
+                        console.log(result); // Success message
+                        alert(result)
+                        if (result="All images sent successfully"){
+                          window.location.href = "/fingerotp";
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error); // Error message
+                        alert(error)
+                    });
+                    
+                  }
+
+                 if (response === "Access Denied"){
+
+                    // SEND TELEGRAM NOTIFICATION
+
+                     // to capture images
+                  //  captureImages("Intruder Alert! Someone is trying to access your house")
+
+                    // Usage example
+                    captureImages("Intruder Alert! Someone is trying to access your house")
+                    .then(function (result) {
+                        console.log(result); // Success message
+                        alert(result)
+                        if (result="All images sent successfully"){
+                          window.location.href = "/";
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error); // Error message
+                        alert(error)
+                    });
+
+            
+                  } 
+
+                  //checkCapture(); //call this function in order to run routing
+              },
+            error: function(xhr) {
+              console.log(xhr.responseText); // Handle any errors that occur
+          }
+        });
+    }
+    
+    // go back to main menu
+    function goBack() {
+      window.location.href = '/';
+    }
+
+    var intervalId = setInterval(function(){
+
+        // facial status
+        getResult();
+    },2000); 
+
+  </script>
+
+
+</body>
+</html>
