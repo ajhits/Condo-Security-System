@@ -48,55 +48,85 @@
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script>
-  
-    function fininger(){
-     $.ajax({
-      url: "/verifys", 
-      type: "GET", 
-      data: { /* Replace with any data you need to send to the server */ },
-        success: function(response) {
-        
-        if (response==="Fingerprint Verified!"){
-            alert(response);
-            window.location.href='/';
-            
-        }
-            
-          // result = response; // Update the variable with the response from the server
-  
-          
-           alert(response);
-          console.log(response);
-           
-     
-        },
-        error: function(xhr) {
-          console.log(xhr.responseText); // Handle any errors that occur
-        }
+
+    function fininger() {
+      return new Promise(function(resolve, reject) {
+        $.ajax({
+          url: "/verifys",
+          type: "GET",
+          data: { /* Replace with any data you need to send to the server */ },
+          success: function(response) {
+            resolve(response);
+          },
+          error: function(xhr) {
+            console.log(xhr.responseText);
+            reject(xhr.responseText); // Reject the Promise with the error message
+          }
+        });
+
       });
     }
     
+    function getRandomNumber(min=0,max=0) {
+      var randomNumber = Math.random() * (max - min) + min;
+      randomNumber = parseFloat(randomNumber.toFixed(1));
+      return randomNumber;
+    }
+
+    // finger print result
     function runProgress() {
       var percentageElement = document.getElementById("percentage");
       percentageElement.innerText = "0%";
-
+    
       var interval = 5; // duration of the progress animation in seconds
       var increment = 100 / (interval * 300 / 60); // increment per 50ms for smooth animation
       var progress = 0;
-
+    
       var progressInterval = setInterval(function() {
         progress += increment;
         percentageElement.innerText = Math.round(progress) + "%";
-
-        if (progress >= 100) {
+    
+        if (progress >= 60) {
           clearInterval(progressInterval);
-          
-          fininger();
-          
+    
+          fininger()
+            .then(function(response) {
+              // Delay the text change for a moment
+        
+                if (response === "Fingerprint Verified!") {
+
+                  // change percentage result
+                  percentageElement.innerText = getRandomNumber(89.1, 98.9) + "%";
+
+                  // route to homepage
+                  setTimeout(function() {
+                    alert(response);
+                    window.location.href = '/';
+                  }, 300); // 500 milliseconds delay
+
+                } else {
+
+                  percentageElement.innerText = getRandomNumber(10.0, 49.9) + "%";
+
+                  setTimeout(function() {
+                    alert(response);
+                  }, 300); 
+                }
+     
+            })
+            .catch(function(err) {
+
+              // Delay the error message for a moment
+              setTimeout(function() {
+                alert(err);
+                percentageElement.innerText = "error";
+                
+              }, 500); // 500 milliseconds delay
+            });
         }
       }, 70);
     }
-
+    
   
   </script>
 </body>

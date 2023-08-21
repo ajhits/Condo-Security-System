@@ -149,8 +149,7 @@ def enroll():
     #     return jsonify("Fingerprint Not Enrolled")
     
     return jsonify("Fingerprint Enrolled Succesfully")
-
-    time.sleep(2)  # Delay before attempting to read the next fingerprint
+    
 @app.route('/verifys', methods=["GET"])
 def verifys():
     # import time
@@ -268,9 +267,6 @@ def doorFeed(camera=None):
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame_encoded.tobytes() + b'\r\n')
 
-           
-# 
-
 # ------------------- Facial recognition Function
 Text = "Initializing"
 Name = ""
@@ -278,6 +274,7 @@ def facialDetection(camera=None, face_detector=None):
     global Text,Name
     Name=""
     Text=""
+    percentage=""
     B , G , R = (0,255,255)
 
     
@@ -325,11 +322,17 @@ def facialDetection(camera=None, face_detector=None):
                         textResult = response[0]
                         if fail == 7:
                             Text = "Access Denied"
+                        
+    
+                        # percentage = "{:.2f}%".format(response[1])
                     else:
                         B, G, R = (0, 255, 0)
                         Name=response[0]
                         textResult = response[0]
                         Text = "Access Granted"
+                        
+                    # every 2 seconds display threshold value
+                    percentage = "{:.2f}%".format(response[1])
                     
                 except:
                     pass
@@ -343,10 +346,14 @@ def facialDetection(camera=None, face_detector=None):
                 start_time = time.time()
                 
             # Get the coordinates of the face,draw rectangele and put text
-            
-        
             cv2.rectangle(frame, (x, y), (x+w, y+h), (B,G,R), 2)
             cv2.putText(frame,textResult,(x,y+h+30),cv2.FONT_HERSHEY_COMPLEX,1,(B,G,R),1)
+
+            # display percentage and calculate percentages face
+            if textResult == "No match detected" or textResult == "":
+                percentage = "{:.2f}%".format(400 * (w * h) / (frame.shape[0] * frame.shape[1]))
+            cv2.putText(frame, percentage, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (B,G,R), 2)
+
 
         # elif len(faces) > 1:
             
@@ -435,7 +442,7 @@ def nameFamily():
 
 
 # =====================  route for registered faces
-path = f"Jojo_loRecognition/Known_Faces/"
+path = f"Jojo_loRecognition/Registered-Faces/"
 
 # ********************* API for submit 
 @app.route('/submit_family', methods=['POST'])
@@ -447,23 +454,32 @@ def submit_family():
 
     # Define the path to the folder you want to create
     path = f"Jojo_loRecognition/Registered-Faces/{str(request.form.get('fullname'))}"
-    if os.path.exists(path):
+    
+    # delete the foldfer path
+    shutil.rmtree(path)
+            
+    # create new path
+    os.makedirs(path)
+    
+    return redirect(url_for('Finger_register'))
+
+    # if os.path.exists(path):
         
-        if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
+    #     if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
         
-            # delete the foldfer path
-            shutil.rmtree(path)
+    #         # delete the foldfer path
+    #         shutil.rmtree(path)
             
         
-            # create new path
-            os.makedirs(path)
-            return redirect(url_for('Finger_register'))
+    #         # create new path
+    #         os.makedirs(path)
+    #         return redirect(url_for('Finger_register'))
         
-    else:
-        if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
-            os.makedirs(path)
-            # route to facial registration
-            return redirect(url_for('Finger_register'))
+    # else:
+    #     if createRegister(name=str(request.form.get('fullname')),type="Family") == "Data inserted successfully!":
+    #         os.makedirs(path)
+    #         # route to facial registration
+    #         return redirect(url_for('Finger_register'))
 
 @app.route('/submit_guest', methods=['POST'])
 def submit_guest():
