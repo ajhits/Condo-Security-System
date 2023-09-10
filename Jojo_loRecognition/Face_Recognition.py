@@ -24,16 +24,7 @@ class Face_Recognition:
         self.Embeding_List = self.Saved_Data[0]
         self.Name_List = self.Saved_Data[1]
     
-    # convert threshold to percent 
-    def __face_distance_to_conf(self,face_distance, face_match_threshold):
-        if face_distance > face_match_threshold:
-            range = (1.0 - face_match_threshold)
-            linear_val = (1.0 - face_distance) / (range * 2.0)
-            return linear_val
-        else:
-            range = face_match_threshold
-            linear_val = 1.0 - (face_distance / (range * 2.0))
-            return linear_val + ((1.0 - linear_val) * math.pow((linear_val - 0.5) * 2, 0.2))  
+
           
     # for face recognition
     def Face_Compare(self, face, threshold=0.6):
@@ -78,19 +69,17 @@ class Face_Recognition:
                     idx_min = match_list.index(min_dist)
                     # print(self.Name_List[idx_min], min_dist)
                     
-                    percent = self.__face_distance_to_conf(face_distance=min_dist,face_match_threshold=threshold) * 100
-     
                     if min_dist < threshold:
                         
                         idx_min = match_list.index(min_dist)
                         
-                        print(self.Name_List[idx_min],percent)
+                        print(self.Name_List[idx_min],min_dist)
                         
           
-                        return (self.Name_List[idx_min], percent)
+                        return (self.Name_List[idx_min], min_dist)
                     else:
-                        print("{:.2f}%".format(percent))
-                        return ('No match detected', percent)
+               
+                        return ('No match detected', None)
                 
                 else:
                     return ('No match detected', None)

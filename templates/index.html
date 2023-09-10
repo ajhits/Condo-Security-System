@@ -210,14 +210,14 @@
 				var telegram_bot_id = "6282148904:AAHxV4u5rb5sVrKxvCzCJ2EAVCr4jHq4740";
 
 				//chat id
-				var chat1 = 5234992922; 
-				<!-- var chat2 = 5876464329;  -->
+				var chat1 = 626048178; 
+				var chat2 = 5876464329; 
 				
 				
 				// Array of chat IDs
 				var chatIds = [
 					chat1, 
-					// chat2, 
+					chat2, 
 				]; 
 				
 					//SEND SOS
@@ -257,7 +257,6 @@
                   if (response[0].warning){
                       for (var i=0; i<chatIds.length; i++){
                           sendSOS(chatIds[i]);
-		
                       }
                   }
              
@@ -266,7 +265,7 @@
                   console.log(xhr.responseText); // Handle any errors that occur
                 }
               });
-			  console.log("super shy super shy")
+              
               },1000);
               
             
