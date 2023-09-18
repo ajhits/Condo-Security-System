@@ -26,14 +26,17 @@ class Face_Recognition:
     
     # convert threshold to percent 
     def __face_distance_to_conf(self,face_distance, face_match_threshold):
+        linear_val = 0
         if face_distance > face_match_threshold:
             range = (1.0 - face_match_threshold)
             linear_val = (1.0 - face_distance) / (range * 2.0)
-            return linear_val
+           
         else:
             range = face_match_threshold
             linear_val = 1.0 - (face_distance / (range * 2.0))
-            return linear_val + ((1.0 - linear_val) * math.pow((linear_val - 0.5) * 2, 0.2))  
+            linear_val += ((1.0 - linear_val) * math.pow((linear_val - 0.5) * 2, 0.2))
+        
+        return linear_val 
           
     # for face recognition
     def Face_Compare(self, face, threshold=0.6):

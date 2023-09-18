@@ -274,7 +274,7 @@ def facialDetection(camera=None, face_detector=None):
     global Text,Name
     Name=""
     Text=""
-    percentage=""
+    percent=""
     B , G , R = (0,255,255)
 
     
@@ -332,7 +332,7 @@ def facialDetection(camera=None, face_detector=None):
                         Text = "Access Granted"
                         
                     # every 2 seconds display threshold value
-                    percentage = "{:.2f}%".format(response[1])
+                    percent = "{:.2f}%".format(response[1])
                     
                 except:
                     pass
@@ -351,8 +351,9 @@ def facialDetection(camera=None, face_detector=None):
 
             # display percentage and calculate percentages face
             if textResult == "No match detected" or textResult == "":
-                percentage = "{:.2f}%".format(200 * (w * h) / (frame.shape[0] * frame.shape[1]))
-            cv2.putText(frame, percentage, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (B,G,R), 2)
+                percent = "{:.2f}%".format(200 * (w * h) / (frame.shape[0] * frame.shape[1]))
+            
+            cv2.putText(frame, percent, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (B,G,R), 2)
 
 
         # elif len(faces) > 1:
