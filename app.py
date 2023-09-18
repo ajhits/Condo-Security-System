@@ -351,8 +351,8 @@ def facialDetection(camera=None, face_detector=None):
 
             # display percentage and calculate percentages face
             if textResult == "No match detected" or textResult == "":
-                percentage = "{:.2f}%".format(400 * (w * h) / (frame.shape[0] * frame.shape[1]))
-            cv2.putText(frame, percentage, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (B,G,R), 2)
+                percentage = "{:.2f}%".format(200 * (w * h) / (frame.shape[0] * frame.shape[1]))
+            cv2.putText(frame, percentage, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (B,G,R), 2)
 
 
         # elif len(faces) > 1:
