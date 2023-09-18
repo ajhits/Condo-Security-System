@@ -336,7 +336,7 @@ def facialDetection(camera=None, face_detector=None):
                         camera.release()
                         
                     # display acccurat threshold every 2 seconds
-                    percent = "{:.2f}%".format(response[1])
+                    percentage = "{:.2f}%".format(response[1])
                     
                     
                 except:
