@@ -89,7 +89,9 @@ class Face_Recognition:
           
                         return (self.Name_List[idx_min], percent)
                     else:
+                        
                         print("{:.2f}%".format(percent))
+                        
                         return ('No match detected', percent)
                 
                 else:
