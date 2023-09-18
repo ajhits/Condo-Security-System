@@ -20,9 +20,8 @@ import time
 
 OTP_EXPIRATION_SECONDS = 60
 
-# papalitan nlang po index dito
-cctv_feedsa = 2
-camera_regface = 0
+camera_regface =0
+
 
 
 def setup():
@@ -143,10 +142,14 @@ def enroll():
         print("Failed to store fingerprint template")
         return jsonify("Fingerprint Not Enrolled")
 
-    time.sleep(2)  # Delay before attempting to read the next fingerprint
+    time.sleep(2)  # Delay before attempting to read the next fingerprin
+    
 @app.route('/verifys', methods=["GET"])
 def verifys():
     import time
+    
+    
+    
     # Wait for a finger to be detected
     while not fingerprint.readImage():
         pass
@@ -188,6 +191,7 @@ def otp():
 # homepage =========================================== #
 @app.route('/')
 def index():
+    cv2.destroyAllWindows()
     GPIO.output(21, GPIO.HIGH)
     return render_template('index.html')
     
@@ -219,7 +223,7 @@ def video_feed():
 def door_feed():
     
     # load a camera,face detection
-    camera = cv2.VideoCapture(camera_regface)
+    camera = cv2.VideoCapture(0) #PALIT1
     return Response(doorFeed(camera=camera), 
                         mimetype='multipart/x-mixed-replace; boundary=frame')
 
@@ -228,7 +232,7 @@ def door_feed():
 def indoor_feed():
     
     # palitan ng index
-    camera_2 = cv2.VideoCapture(1)
+    camera_2 = cv2.VideoCapture(2) #PALIT2
     return Response(get_frame2(camera2=camera_2), mimetype='multipart/x-mixed-replace; boundary=frame')
 # cctv_feed
 def get_frame2(camera2):
@@ -240,6 +244,9 @@ def get_frame2(camera2):
         frame = buffer.tobytes()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        
+    camera2.release()
+    cv2.destroyAllWindows()
 
 def doorFeed(camera=None):
  
@@ -258,6 +265,9 @@ def doorFeed(camera=None):
         _, frame_encoded  = cv2.imencode('.png', frame)
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame_encoded.tobytes() + b'\r\n')
+        
+    camera .release()
+    cv2.destroyAllWindows()
 
            
 # 
@@ -271,7 +281,7 @@ def facialDetection(camera=None, face_detector=None):
     Text=""
     B , G , R = (0,255,255)
 
-    
+    percent=""
     textResult = ""
     
     # Login Attempt
@@ -314,13 +324,20 @@ def facialDetection(camera=None, face_detector=None):
                         fail+=1
                         B, G, R = (0, 0, 255)
                         textResult = response[0]
-                        if fail == 7:
+                        if fail == 3:
                             Text = "Access Denied"
+                            camera.release()
+                            
                     else:
                         B, G, R = (0, 255, 0)
                         Name=response[0]
                         textResult = response[0]
                         Text = "Access Granted"
+                        camera.release()
+                        
+                    # display acccurat threshold every 2 seconds
+                    percent = "{:.2f}%".format(response[1])
+                    
                     
                 except:
                     pass
@@ -334,10 +351,13 @@ def facialDetection(camera=None, face_detector=None):
                 start_time = time.time()
                 
             # Get the coordinates of the face,draw rectangele and put text
-            
-        
             cv2.rectangle(frame, (x, y), (x+w, y+h), (B,G,R), 2)
             cv2.putText(frame,textResult,(x,y+h+30),cv2.FONT_HERSHEY_COMPLEX,1,(B,G,R),1)
+            
+            # display percentage and calculate percentages face
+            if textResult == "No match detected" or textResult == "":
+                percentage = "{:.2f}%".format(150 * (w * h) / (frame.shape[0] * frame.shape[1]))
+            cv2.putText(frame, percentage, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (B,G,R), 2)
 
         # elif len(faces) > 1:
             
@@ -402,10 +422,10 @@ def generate_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # Generate frame bytes for streaming
 
-@app.route('/cctv_feed')
-def cctv_feed():
-    
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')  # Stream the frames
+# @app.route('/cctv_feed')
+# def cctv_feed():
+#     
+#     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')  # Stream the frames
 
 
 # ------------------- Historic Data
@@ -470,6 +490,9 @@ def submit_guest():
     if os.path.exists(path):
         return jsonify({'error': f"Folder {path} already exists"}), 400
     else:
+        # os.makedirs(path)
+        # return redirect(url_for('Facial_Register'))
+        
         if createRegister(name=str(request.form.get('fullname')),type="Guest") == "Data inserted successfully!":
             os.makedirs(path)
             # route to facial registration
@@ -640,7 +663,7 @@ def deleteGuest():
 
 if __name__ == '__main__':
     app.run(
-        host='192.168.174.11',
+        host='192.168.174.8',
         debug=True,
-        port=8001)
+        port=8002)
 
